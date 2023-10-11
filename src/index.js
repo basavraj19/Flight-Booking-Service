@@ -6,6 +6,10 @@ const {ServerConfig, logger }=require('./config');
 
 const api=require('./router');
 
+app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
+
 app.use('/api',api);
 
 app.listen(ServerConfig.PORT,()=>{

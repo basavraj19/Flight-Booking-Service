@@ -27,9 +27,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull :false
     },
-    totalSeats :{
-      type: DataTypes.INTEGER,
-      allowNull :false
+    noOfSeats : {
+      type :DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue :1
     },
     status: {
       type: DataTypes.ENUM,
