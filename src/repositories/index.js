@@ -1,3 +1,4 @@
 module.exports ={
-    BookingRepository :require('./bookingRepository')
+    BookingRepository :require('./bookingRepository'), 
+    SeatBookingRepository :require('./seatbookingRepository')
 }

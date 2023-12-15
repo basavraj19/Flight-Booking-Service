@@ -17,6 +17,7 @@ async function createBookings(req, res) {
         return res.status(StatusCodes.CREATED).json(Successresponse);
     } catch (error) {
         Errorrespones.error = error;
+        console.log(error);
         return res.json(Errorrespones);
     }
 }
@@ -51,8 +52,48 @@ async function makePayment(req,res)
     }
 }
 
+async function cancelBookings(req, res) {
+    try {
+        const response = await BookingService.cancelBooking(req.query.bookingId);
+        Successresponse.data = response;
+        return res.status(StatusCodes.CREATED).json(Successresponse);
+    } catch (error) {
+        Errorrespones.error = error;
+        return res.json(Errorrespones);
+    }
+}
+
+async function generateBookingId(req,res){
+    try {
+        const bookingDetails = await BookingService.generateBookingId(req.body.userId);
+        return bookingDetails;
+    } catch (error) {
+        Errorrespones.error = error;
+        return res.json(Errorrespones);
+    }
+}
+
+async function create(req,res){
+    try {
+        const response =await BookingService.cerate({
+            user_id: req.body.userId,
+            seatNo : req.body.seatNo,
+            bookingId : req.body.bookingId,
+            flightId: req.body.flightId
+        });
+        Successresponse.data = response;
+        return res.status(StatusCodes.CREATED).json(Successresponse);
+    } catch (error) {
+        Errorrespones.error = error;
+        return res.json(Errorrespones);
+    }
+}
+
 module.exports = {
     createBookings,
-    makePayment
+    makePayment,
+    cancelBookings,
+    generateBookingId,
+    create
 }
 

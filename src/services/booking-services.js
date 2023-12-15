@@ -1,10 +1,14 @@
 const axios = require('axios');
 
-const { BookingRepository } = require('../repositories');
+const { BookingRepository, SeatBookingRepository } = require('../repositories');
+
+const { EmailQueueConfig } =require('../config');
 
 const { ServerConfig } = require('../config');
 
 const Bookings = new BookingRepository();
+
+const SeatBooking = new SeatBookingRepository();
 
 const { StatusCodes } = require('http-status-codes');
 
@@ -60,6 +64,7 @@ async function makePayment(data) {
         }
         await Bookings.update(data.bookingId, { status: BOOKED }, transaction);
         transaction.commit();
+        EmailQueueConfig.sendData(bookingDetails);
         return true;
     } catch (error) {
         transaction.rollback();
@@ -96,11 +101,52 @@ async function cancleOldBooking() {
         return response;
     } catch (error) {
         console.log(error);
+        throw error;
     }
+}
+
+async function bookingDetails(bookingId){
+    try {
+        const bookingDetails = await Bookings.getbyId(bookingId);
+        if(!bookingDetails)
+        {
+            throw new AppError('Invalid Booking Details',StatusCodes.NOT_FOUND);
+        }
+        return bookingDetails;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+async function generateBookingId(userId){
+   try {
+     const booking = await Bookings.getBookingByUserID(userId);
+     booking.totalPrice=booking.totalPrice*100;
+     console.log(booking);
+     return booking;
+   } catch (error) {
+       console.log(error);
+       throw error;
+   }
+}
+
+async function cerate(data){
+   try {
+    const booking = await SeatBooking.create(data);
+    return booking;
+   } catch (error) {
+    console.log(error);
+    throw error;
+   }
 }
 
 module.exports = {
     createBooking,
     makePayment,
-    cancleOldBooking
+    cancleOldBooking,
+    cancelBooking,
+    bookingDetails,
+    generateBookingId,
+    cerate
 }

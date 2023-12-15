@@ -7,6 +7,9 @@ const { Op } = require("sequelize");
 const { ENUM } = require('../utils/common');
 const { BOOKED, CANCELLED } = ENUM.booking_status;
 
+const AppError =require('../utils/error/AppError');
+const { StatusCodes }=require('http-status-codes');
+
 class BookingRepository extends CrudRepository {
     constructor() {
         super(Booking);
@@ -60,6 +63,16 @@ class BookingRepository extends CrudRepository {
             }
         });
         return response;
+    }
+
+    async getBookingByUserID(userId){
+        const booking = Booking.findOne({where : {
+            userId : userId
+        }});
+        if(!booking){
+            throw new AppError("Resouce not found", StatusCodes.NOT_FOUND);
+        }
+        return booking;
     }
 
 }
